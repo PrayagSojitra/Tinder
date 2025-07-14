@@ -5,7 +5,7 @@ import {User} from "../models/user.model.js"
 // import userModel from "../models/user.model.js"
 
 const userRegister = asyncHandler(async(req,res)=>{
-    const {firstName,lastName,emailId,password,gender} = req.body;
+    const {firstName,lastName,emailId,password,gender,age,about,skills} = req.body;
 
     if(!firstName){
         throw new APIError(400,"FirstName is Required!!");
@@ -27,6 +27,9 @@ const userRegister = asyncHandler(async(req,res)=>{
         lastName,
         emailId,
         gender,
+        age,
+        about,
+        skills
     })
 
     const createdUser = await User.findById(emailId).select("-password");
