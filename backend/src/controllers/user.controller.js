@@ -22,7 +22,7 @@ const userRegister = asyncHandler(async(req,res)=>{
         throw new APIError(409,"User with this email already existed!!");
     }
 
-    const user = await User.create({
+    await User.create({
         firstName,
         lastName,
         emailId,
@@ -46,6 +46,39 @@ const userRegister = asyncHandler(async(req,res)=>{
     // .cookie
 })
 
+const userLogin = asyncHandler(async(req,res)=>{
+    const {emailId,password} = req.body;
+
+    if(!emailId){
+        throw new APIError(400,"EmailId is Required!!");
+    }
+    if(!password) {
+        throw new APIError(400, "password is required");
+    }
+
+    const user = await User.findOne({emailId});
+
+    if(!user){
+        throw new APIError(400,"user does not exist");
+    }
+
+    const isValidPass = await User.isPassCorrect(password);
+    if (!isValidPass) {
+        throw new APIError(401, "Invalid Credentials");
+    }
+
+    //const tokenssss
+
+    const loggedInUser = await User.findById(emailId).select('-password');
+
+    return res
+    .status(200)
+    .json( 
+        new APIResponse('200',loggedInUser,"User LoggedIn successfully")
+    )
+})
+
 export {
     userRegister,
+    userLogin,
 }
